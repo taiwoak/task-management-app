@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# secret keys
+.env.stage.dev
+
 # Logs
 logs
 *.log
