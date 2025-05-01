@@ -8,6 +8,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { Logger } from '@nestjs/common';
+import { UpdateTaskTitleDto } from './dto/update-task-title.dto';
+import { UpdateTaskDescriptionDto } from './dto/update-task-description.dto';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
@@ -42,5 +44,17 @@ export class TasksController {
     updateTaskStatus(@Param('id') id: string, @Body() updateTaskStatusDto: UpdateTaskStatusDto, @GetUser() user: User): Promise<Task> {
         const { status } = updateTaskStatusDto;
         return this.tasksService.updateTaskStatus(id, status, user);
+    }
+
+    @Patch('/:id/title')
+    updateTaskTitle(@Param('id') id: string, @Body() updateTaskTitleDto: UpdateTaskTitleDto, @GetUser() user: User): Promise<Task> {
+        const { title } = updateTaskTitleDto;
+        return this.tasksService.updateTaskTitle(id, title, user);
+    }
+
+    @Patch('/:id/description')
+    updateTaskDescription(@Param('id') id: string, @Body() updateTaskDescriptionDto: UpdateTaskDescriptionDto, @GetUser() user: User): Promise<Task> {
+        const { description } = updateTaskDescriptionDto;
+        return this.tasksService.updateTaskDescription(id, description, user);
     }
 }
