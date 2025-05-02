@@ -10,7 +10,10 @@ import { User } from '../auth/user.entity';
 import { Logger } from '@nestjs/common';
 import { UpdateTaskTitleDto } from './dto/update-task-title.dto';
 import { UpdateTaskDescriptionDto } from './dto/update-task-description.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('tasks')
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
@@ -19,40 +22,47 @@ export class TasksController {
     ) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get all tasks for authenticated user (with optional filters: status and search)' })
     getTasks(@Query() filterDto: GetTasksFilterDto, @GetUser() user: User): Promise<Task[]> {
         this.logger.verbose(`User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(filterDto)}`);
         return this.tasksService.getTasks(filterDto, user);
     }
 
     @Get('/:id')
+    @ApiOperation({ summary: 'Get a task by ID' })
     getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
         return this.tasksService.getTaskById(id, user);
     }
 
     @Post()
+    @ApiOperation({ summary: 'Create a new task' })
     createTask(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User): Promise<Task> {
         this.logger.verbose(`User "${user.username}" creating a new task. Data: ${JSON.stringify(createTaskDto)}`)
         return this.tasksService.createTask(createTaskDto, user);
     }
 
     @Delete('/:id')
+    @ApiOperation({ summary: 'Delete a task by ID' })
     deleteTask(@Param('id') id: string, @GetUser() user: User): Promise<void> {
         return this.tasksService.deleteTask(id, user);
     }
 
     @Patch('/:id/status')
+    @ApiOperation({ summary: 'Update status of a task' })
     updateTaskStatus(@Param('id') id: string, @Body() updateTaskStatusDto: UpdateTaskStatusDto, @GetUser() user: User): Promise<Task> {
         const { status } = updateTaskStatusDto;
         return this.tasksService.updateTaskStatus(id, status, user);
     }
 
     @Patch('/:id/title')
+    @ApiOperation({ summary: 'Update title of a task' })
     updateTaskTitle(@Param('id') id: string, @Body() updateTaskTitleDto: UpdateTaskTitleDto, @GetUser() user: User): Promise<Task> {
         const { title } = updateTaskTitleDto;
         return this.tasksService.updateTaskTitle(id, title, user);
     }
 
     @Patch('/:id/description')
+    @ApiOperation({ summary: 'Update description of a task' })
     updateTaskDescription(@Param('id') id: string, @Body() updateTaskDescriptionDto: UpdateTaskDescriptionDto, @GetUser() user: User): Promise<Task> {
         const { description } = updateTaskDescriptionDto;
         return this.tasksService.updateTaskDescription(id, description, user);
